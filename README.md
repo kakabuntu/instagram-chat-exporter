@@ -32,6 +32,8 @@ La versione 0.2.2 usa la barra di composizione soltanto per ricavare i confini o
 
 La versione 0.2.3 aggiunge un riconoscimento geometrico dei testi allineati a sinistra e a destra. Viene usato quando Instagram disegna le bolle tramite wrapper o pseudo-elementi non rilevabili dagli stili del browser.
 
+La versione 0.2.4 usa direttamente `raw.githubusercontent.com` per installazione e aggiornamenti, evitando redirect che possono produrre una copia incompleta dello userscript in Tampermonkey.
+
 ## Privacy e limiti
 
 - Lo script non invia dati a server esterni e non include librerie remote.

@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         Instagram Chat Exporter (locale)
 // @namespace    https://local.instagram-chat-exporter/
-// @version      0.2.3
+// @version      0.2.4
 // @description  Esporta la chat Instagram aperta in Markdown, JSON o testo compatto per AI.
 // @author       Alessandro
 // @match        https://www.instagram.com/direct/*
 // @match        https://instagram.com/direct/*
-// @updateURL    https://github.com/kakabuntu/instagram-chat-exporter/raw/refs/heads/main/instagram-chat-exporter.user.js
-// @downloadURL  https://github.com/kakabuntu/instagram-chat-exporter/raw/refs/heads/main/instagram-chat-exporter.user.js
+// @updateURL    https://raw.githubusercontent.com/kakabuntu/instagram-chat-exporter/main/instagram-chat-exporter.user.js
+// @downloadURL  https://raw.githubusercontent.com/kakabuntu/instagram-chat-exporter/main/instagram-chat-exporter.user.js
 // @run-at       document-idle
 // @grant        GM_setClipboard
 // @grant        GM_download
