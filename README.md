@@ -1,4 +1,20 @@
-# Instagram Chat Exporter per Tampermonkey
+# Instagram Chat Exporter
+
+## Estensione Chrome/Edge (consigliata)
+
+La cartella `extension/` contiene l'estensione Manifest V3. Non usa le classi interne di Instagram: la prima volta che apri una conversazione premi **Calibra**, quindi clicca un tuo messaggio e un messaggio dell'utente. L'estensione usa quei due punti per individuare il contenitore reale e distinguere destra/sinistra.
+
+### Installazione locale
+
+1. Apri `chrome://extensions/` oppure `edge://extensions/`.
+2. Attiva **Modalità sviluppatore**.
+3. Scegli **Carica estensione non pacchettizzata**.
+4. Seleziona la cartella `extension` di questo repository.
+5. Apri Instagram Direct e ricarica la pagina.
+
+L'accesso è limitato da `manifest.json` alle sole pagine `/direct/` di Instagram.
+
+## Userscript Tampermonkey (legacy)
 
 Userscript locale per esportare i messaggi **attualmente caricati** in una conversazione di Instagram Web.
 

@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Instagram Chat Exporter",
+  "version": "1.0.0",
+  "description": "Esporta localmente le conversazioni Instagram Direct in testo per AI, Markdown e JSON.",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.instagram.com/direct/*",
+        "https://instagram.com/direct/*"
+      ],
+      "js": ["core.js", "content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
+
