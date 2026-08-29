@@ -26,6 +26,8 @@ Il riconoscimento del mittente usa la posizione del messaggio: destra = `IO`, si
 
 Dalla versione 0.2.0 l'area della conversazione viene individuata a partire dal campo **Scrivi un messaggio...**. In questo modo lo script esclude automaticamente inbox, note, schede profilo e anteprime delle altre chat. Se il campo di composizione non è presente, l'esportazione viene fermata invece di analizzare l'intera pagina.
 
+Dalla versione 0.2.1 il pulsante è posizionato in alto a destra per evitare sovrapposizioni con widget presenti in basso. Viene inoltre reinserito automaticamente se la navigazione interna di Instagram ricostruisce la pagina.
+
 ## Privacy e limiti
 
 - Lo script non invia dati a server esterni e non include librerie remote.

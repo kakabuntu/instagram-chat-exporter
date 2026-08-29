@@ -1,11 +1,13 @@
 // ==UserScript==
 // @name         Instagram Chat Exporter (locale)
 // @namespace    https://local.instagram-chat-exporter/
-// @version      0.2.0
+// @version      0.2.1
 // @description  Esporta la chat Instagram aperta in Markdown, JSON o testo compatto per AI.
 // @author       Alessandro
 // @match        https://www.instagram.com/direct/*
 // @match        https://instagram.com/direct/*
+// @updateURL    https://github.com/kakabuntu/instagram-chat-exporter/raw/refs/heads/main/instagram-chat-exporter.user.js
+// @downloadURL  https://github.com/kakabuntu/instagram-chat-exporter/raw/refs/heads/main/instagram-chat-exporter.user.js
 // @run-at       document-idle
 // @grant        GM_setClipboard
 // @grant        GM_download
@@ -21,8 +23,6 @@
   const isInstagramDirect = () =>
     /(^|\.)instagram\.com$/i.test(location.hostname) &&
     location.pathname.startsWith('/direct/');
-
-  if (!isInstagramDirect() || document.getElementById(APP_ID)) return;
 
   const normalize = (value) => (value || '').replace(/\s+/g, ' ').trim();
 
@@ -294,6 +294,7 @@
   }
 
   function installUi() {
+    if (!document.body || document.getElementById(APP_ID)) return;
     const root = document.createElement('section');
     root.id = APP_ID;
     root.innerHTML = `
@@ -313,10 +314,11 @@
       </div>`;
 
     const style = document.createElement('style');
+    style.id = `${APP_ID}-style`;
     style.textContent = `
-      #${APP_ID}{position:fixed;right:18px;bottom:18px;z-index:2147483647;font:13px/1.4 system-ui,sans-serif;color:#f5f5f5}
+      #${APP_ID}{position:fixed;right:18px;top:88px;z-index:2147483647;font:13px/1.4 system-ui,sans-serif;color:#f5f5f5}
       #${APP_ID}>[data-toggle]{border:0;border-radius:999px;padding:11px 15px;background:#7c3aed;color:white;font-weight:700;box-shadow:0 5px 20px #0006;cursor:pointer}
-      #${APP_ID} [data-panel]{position:absolute;right:0;bottom:48px;width:min(390px,calc(100vw - 30px));padding:14px;border:1px solid #444;border-radius:14px;background:#18181b;box-shadow:0 12px 40px #0008}
+      #${APP_ID} [data-panel]{position:absolute;right:0;top:48px;width:min(390px,calc(100vw - 30px));padding:14px;border:1px solid #444;border-radius:14px;background:#18181b;box-shadow:0 12px 40px #0008}
       #${APP_ID} header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:15px}
       #${APP_ID} header button{border:0;background:transparent;color:#ddd;font-size:22px;cursor:pointer}
       #${APP_ID} [data-count]{margin-bottom:8px;color:#ddd}
@@ -342,5 +344,19 @@
     });
   }
 
-  installUi();
+  function syncUi() {
+    const root = document.getElementById(APP_ID);
+    const style = document.getElementById(`${APP_ID}-style`);
+    if (!isInstagramDirect()) {
+      root?.remove();
+      style?.remove();
+      return;
+    }
+    if (!root) installUi();
+  }
+
+  // Instagram naviga come SPA e può ricostruire il body senza ricaricare la pagina.
+  // Il controllo leggero reinserisce il comando solo nelle pagine Direct.
+  syncUi();
+  window.setInterval(syncUi, 1500);
 })();
