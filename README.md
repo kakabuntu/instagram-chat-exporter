@@ -1,0 +1,33 @@
+# Instagram Chat Exporter per Tampermonkey
+
+Userscript locale per esportare i messaggi **attualmente caricati** in una conversazione di Instagram Web.
+
+## Installazione
+
+1. Installa Tampermonkey su Chrome o Edge.
+2. Apri la dashboard di Tampermonkey e scegli **Crea un nuovo script**.
+3. Cancella il contenuto proposto e incolla tutto il file `instagram-chat-exporter.user.js`.
+4. Salva con `Ctrl+S`.
+5. Apri `https://www.instagram.com/direct/inbox/` e seleziona una chat.
+
+In basso a destra comparirà il pulsante **⇩ Chat**. Lo userscript è autorizzato dal blocco `@match` a funzionare esclusivamente nelle pagine `/direct/` di `instagram.com`; contiene anche un controllo runtime aggiuntivo sul dominio e sul percorso.
+
+## Formati
+
+- **Copia per AI**: formato più compatto, con righe `IO:` e `UTENTE:`. È quello consigliato per consumare meno token.
+- **Markdown**: leggibile sia dall'utente sia da un modello AI.
+- **JSON**: archivio strutturato, adatto a elaborazioni software future.
+
+## Uso corretto
+
+Instagram carica progressivamente la cronologia. Prima dell'esportazione, scorri verso l'alto nella conversazione finché sono stati caricati tutti i messaggi desiderati, quindi premi **Aggiorna** e controlla l'anteprima.
+
+Il riconoscimento del mittente usa la posizione del messaggio: destra = `IO`, sinistra = `UTENTE`. Se nell'anteprima risultasse capovolto, usa **Inverti IO/UTENTE**.
+
+## Privacy e limiti
+
+- Lo script non invia dati a server esterni e non include librerie remote.
+- Gli allegati non vengono scaricati; può essere esportato soltanto l'eventuale testo visibile.
+- Instagram può modificare la struttura delle proprie pagine. Per questo è importante controllare l'anteprima.
+- Esporta e condividi conversazioni soltanto quando ne hai titolo, rimuovendo dati personali non necessari.
+
