@@ -28,6 +28,8 @@ Dalla versione 0.2.0 l'area della conversazione viene individuata a partire dal 
 
 Dalla versione 0.2.1 il pulsante è posizionato in alto a destra per evitare sovrapposizioni con widget presenti in basso. Viene inoltre reinserito automaticamente se la navigazione interna di Instagram ricostruisce la pagina.
 
+La versione 0.2.2 usa la barra di composizione soltanto per ricavare i confini orizzontali della chat e cerca le bolle nell'intera area principale. Questo evita sia i falsi positivi della sidebar sia il caso in cui risultino zero messaggi.
+
 ## Privacy e limiti
 
 - Lo script non invia dati a server esterni e non include librerie remote.

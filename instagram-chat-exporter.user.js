@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Instagram Chat Exporter (locale)
 // @namespace    https://local.instagram-chat-exporter/
-// @version      0.2.1
+// @version      0.2.2
 // @description  Esporta la chat Instagram aperta in Markdown, JSON o testo compatto per AI.
 // @author       Alessandro
 // @match        https://www.instagram.com/direct/*
@@ -60,33 +60,29 @@
 
     if (!composer) return null;
     const composerRect = composer.getBoundingClientRect();
-    const minimumPaneWidth = Math.min(480, innerWidth * 0.42);
-    const ancestors = [];
+    const bars = [];
     for (let node = composer.parentElement; node && node !== document.body; node = node.parentElement) {
       const rect = node.getBoundingClientRect();
-      if (rect.width >= minimumPaneWidth && rect.left <= composerRect.left + 40 && rect.right >= composerRect.right - 40) {
-        ancestors.push(node);
+      if (rect.width >= innerWidth * 0.45 && rect.height <= 180 && rect.left <= composerRect.left + 70 && rect.right >= composerRect.right - 70) {
+        bars.push(node);
       }
       if (node === main) break;
     }
 
-    // Il più grande antenato che conserva il bordo sinistro del composer è il pannello
-    // della conversazione; un antenato che si sposta molto più a sinistra include l'inbox.
-    const pane = ancestors
-      .filter((node) => node.getBoundingClientRect().left >= composerRect.left - 90)
-      .sort((a, b) => b.getBoundingClientRect().height - a.getBoundingClientRect().height)[0]
-      || composer.closest('form')?.parentElement
-      || main;
-
-    const paneRect = pane.getBoundingClientRect();
+    // La barra del compositore fornisce i confini orizzontali della conversazione.
+    // La ricerca resta dentro main perché la cronologia è sorella, non figlia, del composer.
+    const composerBar = bars.sort((a, b) => b.getBoundingClientRect().width - a.getBoundingClientRect().width)[0]
+      || composer.closest('form')
+      || composer.parentElement;
+    const barRect = composerBar.getBoundingClientRect();
     return {
       main,
-      pane,
+      pane: main,
       composer,
       bounds: {
-        left: Math.max(paneRect.left, composerRect.left - 45),
-        right: Math.min(paneRect.right, composerRect.right + 45),
-        middle: (Math.max(paneRect.left, composerRect.left - 45) + Math.min(paneRect.right, composerRect.right + 45)) / 2
+        left: Math.max(main.getBoundingClientRect().left, barRect.left - 20),
+        right: Math.min(main.getBoundingClientRect().right, barRect.right + 20),
+        middle: (Math.max(main.getBoundingClientRect().left, barRect.left - 20) + Math.min(main.getBoundingClientRect().right, barRect.right + 20)) / 2
       }
     };
   }
@@ -94,7 +90,7 @@
   function isInsideHorizontalBounds(element, bounds) {
     const rect = element.getBoundingClientRect();
     const overlap = Math.max(0, Math.min(rect.right, bounds.right) - Math.max(rect.left, bounds.left));
-    return overlap >= Math.min(rect.width * 0.7, 120) && rect.right > bounds.middle;
+    return overlap >= Math.min(rect.width * 0.55, 80);
   }
 
   function hasBubbleAppearance(element) {
@@ -118,19 +114,14 @@
 
   function candidateRows(context) {
     const { pane, bounds, composer } = context;
-    const roleRows = [...pane.querySelectorAll('[role="row"]')]
-      .filter((row) => isVisible(row) && isInsideHorizontalBounds(row, bounds))
-      .filter((row) => !row.contains(composer))
-      .filter((row) => ![...row.querySelectorAll('[role="row"]')].some((child) => child !== row && isInsideHorizontalBounds(child, bounds)));
-    if (roleRows.length) return roleRows;
-
-    // Ripiego: risale dai nodi di testo alla bolla visiva più vicina. Usare una
+    // Risale dai nodi di testo alla bolla visiva più vicina. Usare una
     // sola bolla per messaggio impedisce di esportare gli stessi testi annidati.
     const bubbles = new Set();
     const textElements = [...pane.querySelectorAll('span, div')]
       .filter((element) => directTextLength(element) > 0 && isVisible(element));
 
     for (const textElement of textElements) {
+      if (textElement.closest('button, [role="button"], header, nav')) continue;
       let node = textElement;
       while (node && node !== pane && !hasBubbleAppearance(node)) node = node.parentElement;
       if (!node || node === pane || node.contains(composer)) continue;
@@ -139,7 +130,13 @@
       if (rect.width > (bounds.right - bounds.left) * 0.86 || rect.height > 600) continue;
       bubbles.add(node);
     }
-    return [...bubbles];
+    if (bubbles.size) return [...bubbles];
+
+    // Ripiego per una futura versione di Instagram priva di sfondi sulle bolle.
+    return [...pane.querySelectorAll('[role="row"]')]
+      .filter((row) => isVisible(row) && isInsideHorizontalBounds(row, bounds))
+      .filter((row) => !row.contains(composer))
+      .filter((row) => ![...row.querySelectorAll('[role="row"]')].some((child) => child !== row && isInsideHorizontalBounds(child, bounds)));
   }
 
   function cleanRowText(row) {
