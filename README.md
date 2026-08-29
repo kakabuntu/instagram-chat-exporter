@@ -30,6 +30,8 @@ Dalla versione 0.2.1 il pulsante è posizionato in alto a destra per evitare sov
 
 La versione 0.2.2 usa la barra di composizione soltanto per ricavare i confini orizzontali della chat e cerca le bolle nell'intera area principale. Questo evita sia i falsi positivi della sidebar sia il caso in cui risultino zero messaggi.
 
+La versione 0.2.3 aggiunge un riconoscimento geometrico dei testi allineati a sinistra e a destra. Viene usato quando Instagram disegna le bolle tramite wrapper o pseudo-elementi non rilevabili dagli stili del browser.
+
 ## Privacy e limiti
 
 - Lo script non invia dati a server esterni e non include librerie remote.

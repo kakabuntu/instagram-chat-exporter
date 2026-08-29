@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Instagram Chat Exporter (locale)
 // @namespace    https://local.instagram-chat-exporter/
-// @version      0.2.2
+// @version      0.2.3
 // @description  Esporta la chat Instagram aperta in Markdown, JSON o testo compatto per AI.
 // @author       Alessandro
 // @match        https://www.instagram.com/direct/*
@@ -132,11 +132,31 @@
     }
     if (bubbles.size) return [...bubbles];
 
-    // Ripiego per una futura versione di Instagram priva di sfondi sulle bolle.
-    return [...pane.querySelectorAll('[role="row"]')]
+    // Primo ripiego per markup con righe semantiche ma senza sfondo sulle bolle.
+    const roleRows = [...pane.querySelectorAll('[role="row"]')]
       .filter((row) => isVisible(row) && isInsideHorizontalBounds(row, bounds))
       .filter((row) => !row.contains(composer))
       .filter((row) => ![...row.querySelectorAll('[role="row"]')].some((child) => child !== row && isInsideHorizontalBounds(child, bounds)));
+    if (roleRows.length) return roleRows;
+
+    // Ultimo ripiego: Instagram può disegnare le bolle su wrapper o pseudo-elementi
+    // senza background rilevabile. I nodi di testo allineati a sinistra/destra della
+    // colonna sono messaggi; testi centrati come profilo e timestamp vengono esclusi.
+    return textElements
+      .filter((element) => !element.closest('button, [role="button"], header, nav'))
+      .filter((element) => !element.contains(composer) && !composer.contains(element))
+      .filter((element) => isInsideHorizontalBounds(element, bounds))
+      .filter((element) => {
+        const rect = element.getBoundingClientRect();
+        const center = rect.left + rect.width / 2;
+        return Math.abs(center - bounds.middle) >= 90;
+      })
+      .filter((element) => {
+        const text = normalize(element.textContent);
+        return text.length >= 2
+          && !/^(?:oggi|ieri|lun|mar|mer|merc|gio|ven|sab|dom)?\s*\d{1,2}:\d{2}$/i.test(text)
+          && !/^(?:visualizza profilo|instagram)$/i.test(text);
+      });
   }
 
   function cleanRowText(row) {
