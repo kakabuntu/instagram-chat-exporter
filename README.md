@@ -24,10 +24,11 @@ Instagram carica progressivamente la cronologia. Prima dell'esportazione, scorri
 
 Il riconoscimento del mittente usa la posizione del messaggio: destra = `IO`, sinistra = `UTENTE`. Se nell'anteprima risultasse capovolto, usa **Inverti IO/UTENTE**.
 
+Dalla versione 0.2.0 l'area della conversazione viene individuata a partire dal campo **Scrivi un messaggio...**. In questo modo lo script esclude automaticamente inbox, note, schede profilo e anteprime delle altre chat. Se il campo di composizione non è presente, l'esportazione viene fermata invece di analizzare l'intera pagina.
+
 ## Privacy e limiti
 
 - Lo script non invia dati a server esterni e non include librerie remote.
 - Gli allegati non vengono scaricati; può essere esportato soltanto l'eventuale testo visibile.
 - Instagram può modificare la struttura delle proprie pagine. Per questo è importante controllare l'anteprima.
 - Esporta e condividi conversazioni soltanto quando ne hai titolo, rimuovendo dati personali non necessari.
-
