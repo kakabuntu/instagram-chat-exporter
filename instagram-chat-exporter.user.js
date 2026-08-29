@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Instagram Chat Exporter (locale)
 // @namespace    https://local.instagram-chat-exporter/
-// @version      0.2.4
+// @version      0.3.0
 // @description  Esporta la chat Instagram aperta in Markdown, JSON o testo compatto per AI.
 // @author       Alessandro
 // @match        https://www.instagram.com/direct/*
@@ -114,42 +114,22 @@
 
   function candidateRows(context) {
     const { pane, bounds, composer } = context;
-    // Risale dai nodi di testo alla bolla visiva più vicina. Usare una
-    // sola bolla per messaggio impedisce di esportare gli stessi testi annidati.
-    const bubbles = new Set();
-    const textElements = [...pane.querySelectorAll('span, div')]
-      .filter((element) => directTextLength(element) > 0 && isVisible(element));
-
-    for (const textElement of textElements) {
-      if (textElement.closest('button, [role="button"], header, nav')) continue;
-      let node = textElement;
-      while (node && node !== pane && !hasBubbleAppearance(node)) node = node.parentElement;
-      if (!node || node === pane || node.contains(composer)) continue;
-      const rect = node.getBoundingClientRect();
-      if (!isInsideHorizontalBounds(node, bounds)) continue;
-      if (rect.width > (bounds.right - bounds.left) * 0.86 || rect.height > 600) continue;
-      bubbles.add(node);
-    }
-    if (bubbles.size) return [...bubbles];
-
-    // Primo ripiego per markup con righe semantiche ma senza sfondo sulle bolle.
-    const roleRows = [...pane.querySelectorAll('[role="row"]')]
-      .filter((row) => isVisible(row) && isInsideHorizontalBounds(row, bounds))
-      .filter((row) => !row.contains(composer))
-      .filter((row) => ![...row.querySelectorAll('[role="row"]')].some((child) => child !== row && isInsideHorizontalBounds(child, bounds)));
-    if (roleRows.length) return roleRows;
-
-    // Ultimo ripiego: Instagram può disegnare le bolle su wrapper o pseudo-elementi
-    // senza background rilevabile. I nodi di testo allineati a sinistra/destra della
-    // colonna sono messaggi; testi centrati come profilo e timestamp vengono esclusi.
-    return textElements
+    // Instagram cambia frequentemente classi, ruoli e wrapper. La strategia stabile
+    // è leggere i nodi di testo foglia dentro la colonna delimitata dal composer.
+    return [...pane.querySelectorAll('span, div')]
+      .filter((element) => directTextLength(element) >= 2 && isVisible(element))
       .filter((element) => !element.closest('button, [role="button"], header, nav'))
       .filter((element) => !element.contains(composer) && !composer.contains(element))
-      .filter((element) => isInsideHorizontalBounds(element, bounds))
+      .filter((element) => {
+        const rect = element.getBoundingClientRect();
+        return rect.left >= bounds.left - 10
+          && rect.right <= bounds.right + 10
+          && rect.bottom < composer.getBoundingClientRect().top - 4;
+      })
       .filter((element) => {
         const rect = element.getBoundingClientRect();
         const center = rect.left + rect.width / 2;
-        return Math.abs(center - bounds.middle) >= 90;
+        return Math.abs(center - bounds.middle) >= 70;
       })
       .filter((element) => {
         const text = normalize(element.textContent);

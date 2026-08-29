@@ -34,6 +34,8 @@ La versione 0.2.3 aggiunge un riconoscimento geometrico dei testi allineati a si
 
 La versione 0.2.4 usa direttamente `raw.githubusercontent.com` per installazione e aggiornamenti, evitando redirect che possono produrre una copia incompleta dello userscript in Tampermonkey.
 
+La versione 0.3.0 elimina la dipendenza da classi, ruoli e stile delle bolle Instagram: estrae direttamente i testi foglia presenti nella colonna della conversazione.
+
 ## Privacy e limiti
 
 - Lo script non invia dati a server esterni e non include librerie remote.
